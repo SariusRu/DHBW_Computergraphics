@@ -58,3 +58,15 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+
+CG_2020_Testat/ProjectSettings/
+
+CG_2020_Testat/Packages/
+
+CG_2020_Testat/Logs/
+
+CG_2020_Testat/Library/
+
+CG_2020_Testat/.vscode/
+
+debug.log
