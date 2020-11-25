@@ -319,8 +319,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af728954e03c7bc42849503535653cc4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textureWidth: 256
-  textureHeigth: 256
+  textureWidth: 128
+  textureHeigth: 128
   maxHeight: 1
 --- !u!1 &1724034647
 GameObject:
