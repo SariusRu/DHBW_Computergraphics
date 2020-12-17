@@ -45,7 +45,7 @@ public class DiamondSquare : MonoBehaviour
                     avg += textureValues[x,y + tileWidth];
                     avg += textureValues[x + tileWidth,y + tileWidth];
                     avg = avg / 4;
-                    avg += Random.Range(-128, 128);
+                    avg += Random.Range(0, 255);
                     textureValues[x + halfSide, y + halfSide] = avg;
                     Debug.Log("DiamondStep done");
                 }
@@ -62,7 +62,7 @@ public class DiamondSquare : MonoBehaviour
                     avg += textureValues[x, (y - halfSide + width - 1) % (width - 1)];
 
                     avg = avg / 4;
-                    avg = Random.Range(-128, 128);
+                    avg = Random.Range(0, 255);
 
                     textureValues[x, y] = avg;
 
