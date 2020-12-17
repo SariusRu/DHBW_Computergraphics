@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 
 /// <summary>
@@ -10,7 +12,11 @@ using UnityEngine;
 public class DiamondSquare : MonoBehaviour
 {
     int halfSide;
-    int width = 65;
+    public int width = 65;
+
+    public int height = 65;
+
+    private int workingWidth;
 
     // Speichert alle Höhenwerte der späteren Heightmap
     private float[,] textureValues;
@@ -18,8 +24,10 @@ public class DiamondSquare : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //Check if the width is even or odd. If the width is even, it is decreased by one.
+        SetWorkingWidth();
 
-        textureValues = new float[width, width];
+        textureValues = new float[workingWidth, workingWidth];
         //Debug.Log("Setting Corner Values");
         CornerValues();
         diamondSquareAlg();
@@ -29,16 +37,44 @@ public class DiamondSquare : MonoBehaviour
         SetTexture(ConvertToTexture());
     }
 
+    private void SetWorkingWidth()
+    {
+        int comparing = 0;
+        if (width > height)
+        {
+            comparing = width;
+        }
+        else
+        {
+            comparing = height;
+        }
+        int working = 2;
+        while (working < comparing)
+        {
+            working = working * 2;
+        }
+        if (working % 2 == 0)
+        {
+            workingWidth = working + 1;
+            Debug.Log("The actual width will be reduced by one.");
+        }
+        else
+        {
+            workingWidth = working;
+        }
+        Debug.Log("WorkingWidth is " + workingWidth );
+    }
+
     void diamondSquareAlg()
     {
-        int tileWidth = width - 1;
+        int tileWidth = workingWidth - 1;
         while (tileWidth > 1)
         {
             halfSide = tileWidth / 2;
             //Diamond
-            for (int x = 0; x < width - 1; x += tileWidth)
+            for (int x = 0; x < workingWidth - 1; x += tileWidth)
             {
-                for (int y = 0; y < width - 1; y += tileWidth)
+                for (int y = 0; y < workingWidth - 1; y += tileWidth)
                 {
                     float avg = textureValues[x,y];
                     avg += textureValues[x + tileWidth,y];
@@ -52,14 +88,14 @@ public class DiamondSquare : MonoBehaviour
             }
 
             //SquareStep
-            for (int x = 0; x < width - 1; x += halfSide)
+            for (int x = 0; x < workingWidth - 1; x += halfSide)
             {
-                for (int y = (x + halfSide) % tileWidth; y < width - 1; y += tileWidth)
+                for (int y = (x + halfSide) % tileWidth; y < workingWidth - 1; y += tileWidth)
                 {
-                    float avg = textureValues[(x - halfSide + width - 1) % (width - 1), y];
-                    avg += textureValues[(x + halfSide) % (width - 1), y];
-                    avg += textureValues[x, (y + halfSide) % (width - 1)];
-                    avg += textureValues[x, (y - halfSide + width - 1) % (width - 1)];
+                    float avg = textureValues[(x - halfSide + workingWidth - 1) % (workingWidth - 1), y];
+                    avg += textureValues[(x + halfSide) % (workingWidth - 1), y];
+                    avg += textureValues[x, (y + halfSide) % (workingWidth - 1)];
+                    avg += textureValues[x, (y - halfSide + workingWidth - 1) % (workingWidth - 1)];
 
                     avg = avg / 4;
                     avg = Random.Range(0, 255);
@@ -69,11 +105,11 @@ public class DiamondSquare : MonoBehaviour
                     //because the values wrap round, the left and right edges are equal, same with top and bottom
                     if (x == 0)
                     {
-                        textureValues[width-1, y] = avg;
+                        textureValues[workingWidth - 1, y] = avg;
                     }
                     if (y == 0)
                     {
-                        textureValues[x, width-1] = avg;
+                        textureValues[x, workingWidth - 1] = avg;
                     }
                 }
             }
@@ -99,13 +135,26 @@ public class DiamondSquare : MonoBehaviour
     private Texture2D ConvertToTexture()
     {
         Debug.Log(textureValues);
-        Texture2D texture = new Texture2D(width, width);
+        Texture2D texture = new Texture2D(width, height);
 
         float maxValue = getScaleRate();
 
-        for(int x = 0; x<width; x++)
+        // GET X Start-Value
+        int startValueX = (workingWidth - width)/2;
+        Debug.Log(startValueX);
+        int endValueX = startValueX + width;
+        Debug.Log(endValueX);
+
+        // GET Y Start-Value
+        int startValueY = (workingWidth - height) / 2;
+        Debug.Log(startValueY);
+        int endValueY = startValueY + height;
+        Debug.Log(endValueY);
+
+
+        for (int x = startValueX; x < endValueX; x++)
         {
-            for(int y = 0; y<width; y++)
+            for(int y = startValueY; y < endValueY; y++)
             {
                 texture.SetPixel(x, y, ColorFromValue(x,y, maxValue));
             }
@@ -117,9 +166,9 @@ public class DiamondSquare : MonoBehaviour
     private float getScaleRate()
     {
         float max = 0;
-        for (int x = 0; x < width; x++)
+        for (int x = 0; x < workingWidth; x++)
         {
-            for (int y = 0; y < width; y++)
+            for (int y = 0; y < workingWidth; y++)
             {
                 if(textureValues[x,y]>max)
                 {
@@ -140,9 +189,9 @@ public class DiamondSquare : MonoBehaviour
     void CornerValues()
     {
         textureValues[0,0] = Random.Range(0, 255); ;
-        textureValues[0,width-1] = Random.Range(0, 255); ;
-        textureValues[width-1, 0] = Random.Range(0, 255); ;
-        textureValues[width-1, width-1] = Random.Range(0, 255); ;
+        textureValues[0, workingWidth - 1] = Random.Range(0, 255); ;
+        textureValues[workingWidth - 1, 0] = Random.Range(0, 255); ;
+        textureValues[workingWidth - 1, workingWidth - 1] = Random.Range(0, 255); ;
         Debug.Log("Cornervalues set");
     }
 }
