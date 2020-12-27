@@ -16,6 +16,9 @@ public class DiamondSquareAlg
     // granularity of values between 0 and 1 in the height map
     public int granularity = 255;
 
+    // size of possible added random value
+    public float smoothness = 0.75f; 
+
    // height map two dimensional value storage
     private float[,] height_map;
     private Texture2D height_map_text;
@@ -29,10 +32,11 @@ public class DiamondSquareAlg
     // Splits non square dimensions into square dimensions 
     // Starts Diamond Square Algorithmen on the square dimensions
     // Applies the generated texture to the object
-    public DiamondSquareAlg(int width, int height, int granularity, Renderer t_renderer)
+    public DiamondSquareAlg(int width, int height, int granularity, float smoothness, Renderer t_renderer)
     {
         // Initiate global objects
         renderer = t_renderer;
+        this.smoothness = smoothness;
         height_map = new float[width, height];
 
         // Expand the given dimensions into a square and then perform Diamond-Square
@@ -144,7 +148,7 @@ public class DiamondSquareAlg
 
         // Calculate the average value for center & add random value:
         avg = avg / 4;
-        avg += Random.Range(-avg, 1 - avg);
+        avg += (Random.Range(-avg, 1 - avg) * smoothness);
 
         // Add calculated value to height_map
         height_map[x + (width/2), y + (width/2)] = avg;
@@ -200,7 +204,7 @@ public class DiamondSquareAlg
 
         // Calculate the average value & add the random value
         avg = avg / count;
-        avg += Random.Range(-avg, 1 - avg);
+        avg += (Random.Range(-avg, 1 - avg) * smoothness);
 
         // add the calculated value to the height map
         height_map[x,y] = avg;
