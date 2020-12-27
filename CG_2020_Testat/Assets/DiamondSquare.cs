@@ -6,7 +6,7 @@ using Random = UnityEngine.Random;
 
 
 /// <summary>
-/// Diese Klasse beinhaltet alle Elemente und Methoden, die für die Erzeugung der Heightmap mittels Diamond-Square-Algorithmus.
+/// Diese Klasse beinhaltet alle Elemente und Methoden, die für die Erzeugung der Heightmap mittels Diamond-Square-Algorithmus benötigt werden.
 /// </summary>
 /// <see cref="https://learn.64bitdragon.com/articles/computer-science/procedural-generation/the-diamond-square-algorithm"/>
 public class DiamondSquare : MonoBehaviour
