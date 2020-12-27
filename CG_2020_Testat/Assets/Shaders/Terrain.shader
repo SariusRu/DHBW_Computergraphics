@@ -21,7 +21,7 @@ Shader "CG_Lecture/DisplacementMapShader"
 				// Spekulare Reflektanz
 				_Ks("Specular Reflectance", Range(0, 1)) = 0.5
 				// Shininess
-				_Shininess("Shininess", Range(1, 300)) = 100
+				_Shininess("Shininess", Range(0, 2)) = 1
 	}
 
 	// A Shader can contain one or more SubShaders, which are primarily used to implement shaders for different GPU capabilities
@@ -150,7 +150,7 @@ Shader "CG_Lecture/DisplacementMapShader"
                 float4 diffLight = nl * _LightColor0;
 
 
-				float3 worldSpaceReflection = reflect(normalize(_WorldSpaceLightPos0.xyz), i.worldNormal);
+				float3 worldSpaceReflection = reflect(normalize(-_WorldSpaceLightPos0.xyz), i.worldNormal);
 				half re = pow(max(dot(worldSpaceReflection, i.worldViewDir), 0), _Shininess);
 
 				// Spekularer Anteil multipliziert mit der Lichtfarbe
