@@ -9,6 +9,9 @@ Shader "CG_Lecture/DisplacementMapShader"
 				 [HideInInspector]_HeightMap ("Height Map", 2D) = "white"{}
 				 [HideInInspector]_MoistureMap ("Moisture Map", 2D) = "white"{}
 				_ColorMap ("Color Map", 2D) = "normal"{}
+				_WaveNormalMap1 ("Wave Normal Map 1", 2D) = "normal"{}
+				_WaveNormalMap2 ("Wave Normal Map 2", 2D) = "normal"{}
+				_WaveSpeed("Wave Animation Speed", Range(0, 1)) = 0.5
                 _TerrainScale ("Terrain Scale", Range(0, 1)) = 0.1
 				_SeeLevelScale ("See Level Scale", Range(0, 1)) = 0.5
 				// Ambiente Reflektanz
@@ -53,17 +56,22 @@ Shader "CG_Lecture/DisplacementMapShader"
 			float _SeeLevelScale;
 			float _Ka, _Kd, _Ks;
 			float _Shininess;
+			sampler2D _WaveNormalMap1;
+			sampler2D _WaveNormalMap2;
+			float _WaveSpeed;
 
-			// struct to pass Data from Vertex Sahder to Fragment Shader
+
 			struct v2f
 			{
 				// SV_POSITION: Shader semantic for position in Clip Space: https://docs.unity3d.com/Manual/SL-ShaderSemantics.html?_ga=2.64760810.432960686.1524081652-394573263.1524081652
 				float4 vertex : SV_POSITION;
 				float4 col : COLOR;
-				float seeLevelOffset : TEXCOORD2;
+				float seeLevelOffset : CUSTOM;
 
-				half3 worldNormal : TEXCOORD0;
+				half3 worldNormal : NORMAL;
 				half3 worldViewDir : TEXCOORD1;
+
+				half3 texcoord : TEXCOORD0;
 			};
 
 
@@ -76,6 +84,7 @@ Shader "CG_Lecture/DisplacementMapShader"
 
 				//TODO: get vertex Data
 				o.vertex = v.vertex;
+				o.texcoord = v.texcoord;
 
 				// Access height-map-texture and extract hight map value
 				fixed4 disVal = tex2Dlod(_HeightMap, float4(v.texcoord.xy, 0, 0));
@@ -84,7 +93,11 @@ Shader "CG_Lecture/DisplacementMapShader"
 				fixed4 mosVal = tex2Dlod(_MoistureMap, float4(v.texcoord.xy, 0, 0));
 		
 				//TODO: displace vertex by the value of the height map along the normal vector
-				if(disVal.x <= _SeeLevelScale) disVal.xyz = _SeeLevelScale;
+				if(disVal.x <= _SeeLevelScale) 
+				{
+					disVal.xyz = _SeeLevelScale;
+				}
+
 				o.vertex.xyz += _TerrainScale * v.normal * disVal.x * 0.01f;		
 
 				//TODO: Convert Vertex Data from Object to Clip Space
@@ -108,10 +121,21 @@ Shader "CG_Lecture/DisplacementMapShader"
 			// SV_Target: Shader semantic render target (SV_Target = SV_Target0): https://docs.unity3d.com/Manual/SL-ShaderSemantics.html?_ga=2.64760810.432960686.1524081652-394573263.1524081652
 			fixed4 frag (v2f i) : SV_Target
 			{
+				// Wasser/Wellen-Animation wenn im vertex shader unter dem seeLevelOffset liegt
+				if(i.seeLevelOffset <= 0)
+				{ 
+					// für die Animation werden zwei verschiedene normalen Karten verwendet. Eine Karte wird mit der Zeit in X und die andere in Y Richtung verschoben um eine schönere Wellen-Animation zu erhalten.
+					// Hierzu wird zur Position der _WaveSpeed Faktor multipliziert mit der Zeit seit die Szene geladen wurde (geteilt durch 5 für langsamere Geschwindigkeit) addiert
+					half3 waveNormal = normalize(UnpackNormal(tex2D(_WaveNormalMap1, float2(i.texcoord.x + _WaveSpeed * _Time.x/5, i.texcoord.y))) + UnpackNormal(tex2D(_WaveNormalMap2, float2(i.texcoord.x, i.texcoord.y + _WaveSpeed * _Time.x/5))));
+					// Anschließend werden die Normalen der Animation zu den "normalen" Normalen addiert und normiert.
+					i.worldNormal = normalize(i.worldNormal + waveNormal);
+				}
+
 				// Ambiente Licht Farbe
 				// das gesamte ambiente Licht der Szene wird durch die Funktion ShadeSH9 (Teil von UnityCG.cginc) ausgewertet
 				// Dazu werden die homogenen Oberflächen Normalen in Welt-Koordinaten verwendet.
 				float4 ambLight = float4(ShadeSH9(half4(i.worldNormal,1)),1);
+
 
 				// Standard Diffuse (Lambert) Shading
 				// Gewichtung durch Skalarprodukt (Dot-Produkt) zwischen Normalen-Vektor
@@ -126,7 +150,7 @@ Shader "CG_Lecture/DisplacementMapShader"
                 float4 diffLight = nl * _LightColor0;
 
 
-				float3 worldSpaceReflection = reflect(normalize(-_WorldSpaceLightPos0.xyz), i.worldNormal);
+				float3 worldSpaceReflection = reflect(normalize(_WorldSpaceLightPos0.xyz), i.worldNormal);
 				half re = pow(max(dot(worldSpaceReflection, i.worldViewDir), 0), _Shininess);
 
 				// Spekularer Anteil multipliziert mit der Lichtfarbe
