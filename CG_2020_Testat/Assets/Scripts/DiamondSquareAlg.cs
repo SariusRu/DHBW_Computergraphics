@@ -7,25 +7,18 @@ using UnityEngine;
 /// </summary>
 public class DiamondSquareAlg
 {
-    // width of the generated height map
-    public int width = 65;
-
-    // height of the generated height map
-    public int height = 65;
-
-    // granularity of values between 0 and 1 in the height map
-    public int granularity = 255;
-
-    // size of possible added random value
-    public float smoothness = 0.75f; 
-
    // height map two dimensional value storage
     private float[,] height_map;
     private Texture2D height_map_text;
-    
-    
+    private float smoothness;
+    private int granularity;
+    private int width;
+    private int height;
+
+
     // renderer to apply the generated height as texture to a object
     private Renderer renderer;
+    
 
 
     // Start is called before the first frame update
@@ -37,6 +30,10 @@ public class DiamondSquareAlg
         // Initiate global objects
         renderer = t_renderer;
         this.smoothness = smoothness;
+        this.granularity = granularity;
+        this.width = width;
+        this.height = height;
+
         height_map = new float[width, height];
 
         // Expand the given dimensions into a square and then perform Diamond-Square

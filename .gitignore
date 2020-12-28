@@ -70,3 +70,7 @@ CG_2020_Testat/Library/
 CG_2020_Testat/.vscode/
 
 debug.log
+
+CG_2020_Testat/Temp
+
+CG_2020_Testat/obj
