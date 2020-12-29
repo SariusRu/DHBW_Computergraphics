@@ -49,6 +49,7 @@ public class SwitchToAstronautFirstPerson : MonoBehaviour
             OverviewCamera.enabled = false;
             firstPersonCamera.enabled = true;
             thirdPersonCamera.enabled = false;
+            TextToHide.SetActive(false);
             //Prevents the camera from any further switches
             counter += Time.deltaTime;
             SecondSwitchOccured = true;

@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class FirstPersonControls : MonoBehaviour {
 
-    public Camera FirstPersonCamera;
+    public Camera ThirdPerson;
     public Camera StartCamera;
 
     public float movementSpeed = 7.5f;
@@ -65,8 +65,8 @@ public class FirstPersonControls : MonoBehaviour {
         {
             rotationX += -Input.GetAxis("Mouse Y") * lookSpeed;
             rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);
-            FirstPersonCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
-            transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
+            ThirdPerson.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
+            transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);            
         }
     }
 

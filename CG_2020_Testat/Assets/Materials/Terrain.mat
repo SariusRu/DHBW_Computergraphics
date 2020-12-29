@@ -83,21 +83,21 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _Ka: 0.5
+    - _Ka: 0
     - _Kd: 1
-    - _Ks: 1
+    - _Ks: 0.561
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _SeeLevelScale: 0.556
-    - _Shininess: 15
+    - _SeeLevelScale: 0.18
+    - _Shininess: 0.8
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _TerrainScale: 0.205
+    - _TerrainScale: 1.8
     - _UVSec: 0
-    - _WaveSpeed: 0.5
+    - _WaveSpeed: 0.383
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
