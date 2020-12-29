@@ -14,17 +14,24 @@ internal class DiamondSquareImproved
         // The minimum suitable width is determined and saved in the globalWidth
         SetWorkingWidth(width, heigth);
 
-        //Problem: Algorithmus works only with 2^n+1
+        // The renderer of the scene, used to store the Heightmap-Texture into the file.
         this.renderer = renderer;
+
+        // Sets the smoothness of the elements
         this.smoothness = smoothness;
 
+        // Sets the value of the 4 corner-values with random values in the range of 0..1
         SetCornerValues();
+
+        // Runs the Diamond Square Alg.
         RunDiamondSquare();
+
+        // Saves the heightmap into the Material.
         this.renderer.material.SetTexture("_HeightMap", convertFloatArrayToTexture(width, heigth));
     }
     private void SetWorkingWidth(int width, int height)
     {
-        int comparing = 0;
+        int comparing;
         if (width > height)
         {
             comparing = width;
@@ -33,19 +40,21 @@ internal class DiamondSquareImproved
         {
             comparing = height;
         }
-        int working = 2;
-        while (working <= comparing)
+        float factor = Mathf.Log(comparing-1, 2);
+
+        int workingValue = 0;
+
+            workingValue = Mathf.FloorToInt(factor) + 1;
+            workingValue = (int)Mathf.Pow(2, workingValue);
+
+        if (workingValue % 2 == 0)
         {
-            working = working * 2;
-        }
-        if (working % 2 == 0)
-        {
-            globalWidth = working + 1;
+            globalWidth = workingValue + 1;
             Debug.Log("The actual width will be reduced by one.");
         }
         else
         {
-            globalWidth = working;
+            globalWidth = workingValue;
         }
         Debug.Log("WorkingWidth is " + globalWidth);
     }
@@ -154,11 +163,11 @@ internal class DiamondSquareImproved
         int startValueY = (globalWidth - height) / 2;
         int endValueY = startValueY + height;
 
-        for (int x = 0; x < globalWidth; x++)
+        for (int x = startValueX; x < endValueX; x++)
         {
-            for (int y = 0; y < globalWidth; y++)
+            for (int y = startValueY; y < endValueY; y++)
             {
-                texture.SetPixel(x, y, ColorFromValue(x, y, maxValue));
+                texture.SetPixel(x-startValueX, y-startValueY, ColorFromValue(x, y, maxValue));
             }
         }
         texture.Apply();
