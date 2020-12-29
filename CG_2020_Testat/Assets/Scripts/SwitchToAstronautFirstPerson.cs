@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// Script used for the start sequence of the project.
+// Switches from the main camera to the third-person after a given time.
 public class SwitchToAstronautFirstPerson : MonoBehaviour
 {
     public Camera firstPersonCamera;

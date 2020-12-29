@@ -1,9 +1,11 @@
-﻿using System.Collections;
+﻿// Obsolete. Was used for the longest time during the project, however, it didn't work properly
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Diese Klasse beinhaltet alle Elemente und Methoden, die für die Erzeugung der Heightmap mittels Diamond-Square-Algorithmus benötigt werden.
+/// Contains all methods used for the Diamond-Square-Alg
 /// </summary>
 public class DiamondSquareAlg
 {
@@ -24,7 +26,11 @@ public class DiamondSquareAlg
     // Splits non square dimensions into square dimensions 
     // Starts Diamond Square Algorithmen on the square dimensions
     // Applies the generated texture to the object
-    public DiamondSquareAlg(int width, int height, int granularity, float smoothness, Renderer renderer)
+    public DiamondSquareAlg(int width,
+                            int height,
+                            int granularity,
+                            float smoothness,
+                            Renderer renderer)
     {
         // Initiate global objects
         this.renderer = renderer;

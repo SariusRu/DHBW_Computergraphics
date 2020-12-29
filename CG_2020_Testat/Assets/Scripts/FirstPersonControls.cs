@@ -4,7 +4,11 @@ using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
 
+///<summary>
+///Contains all methods to controll the astronaut
+///</summary>
 public class FirstPersonControls : MonoBehaviour {
+
 
     public Camera ThirdPerson;
     public Camera StartCamera;

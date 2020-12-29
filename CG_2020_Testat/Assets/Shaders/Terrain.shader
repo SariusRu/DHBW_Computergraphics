@@ -1,7 +1,9 @@
 Shader "CG_Lecture/DisplacementMapShader"
 {
-	// Tutorial - Vertex und Fragment Shader examples: https://docs.unity3d.com/Manual/SL-VertexFragmentShaderExamples.html
-	// DOC: How to write vertex and fragment shaders: https://docs.unity3d.com/Manual/SL-ShaderPrograms.html
+	// Tutorial - Vertex und Fragment Shader examples:
+	// https://docs.unity3d.com/Manual/SL-VertexFragmentShaderExamples.html
+	// DOC: How to write vertex and fragment shaders:
+	// https://docs.unity3d.com/Manual/SL-ShaderPrograms.html
 
 	// Property Definition --> Visible in IDE
 	Properties
@@ -28,7 +30,8 @@ Shader "CG_Lecture/DisplacementMapShader"
 				_Shininess("Shininess", Range(0, 2)) = 0.35
 	}
 
-	// A Shader can contain one or more SubShaders, which are primarily used to implement shaders for different GPU capabilities
+	// A Shader can contain one or more SubShaders,
+	// which are primarily used to implement shaders for different GPU capabilities
 	SubShader
 	{
 		// Subshaders use tags to tell how and when
@@ -36,7 +39,8 @@ Shader "CG_Lecture/DisplacementMapShader"
 		// https://docs.unity3d.com/Manual/SL-SubShaderTags.html
 		Tags { "RenderType"="Opaque" }
 
-		// Each SubShader is composed of a number of passes, and each Pass represents an execution of the vertex and fragment
+		// Each SubShader is composed of a number of passes, and each Pass
+		// represents an execution of the vertex and fragment
 		// code for the same object rendered with the material of the shader
 		Pass
 		{
@@ -68,7 +72,8 @@ Shader "CG_Lecture/DisplacementMapShader"
 
 			struct v2f
 			{
-				// SV_POSITION: Shader semantic for position in Clip Space: https://docs.unity3d.com/Manual/SL-ShaderSemantics.html?_ga=2.64760810.432960686.1524081652-394573263.1524081652
+				// SV_POSITION: Shader semantic for position in Clip Space:
+				// https://docs.unity3d.com/Manual/SL-ShaderSemantics.html?_ga=2.64760810.432960686.1524081652-394573263.1524081652
 				float4 vertex : SV_POSITION;
 				float4 col : COLOR;
 				float seeLevelOffset : CUSTOM;
@@ -97,7 +102,7 @@ Shader "CG_Lecture/DisplacementMapShader"
 				// Access moisture-map-texture and extract moistureness
 				fixed4 mosVal = tex2Dlod(_MoistureMap, float4(v.texcoord.xy, 0, 0));
 		
-				//TODO: displace vertex by the value of the height map along the normal vector
+				// displaces vertex by the value of the height map along the normal vector
 				if(disVal.x <= _SeeLevelScale) 
 				{
 					disVal.xyz = _SeeLevelScale;
@@ -111,14 +116,14 @@ Shader "CG_Lecture/DisplacementMapShader"
 
 				o.vertex.xyz += _TerrainScale * v.normal * disVal.x * 0.01f;		
 
-				//TODO: Convert Vertex Data from Object to Clip Space
+				// Converts Vertex Data from Object to Clip Space
 				o.vertex = UnityObjectToClipPos(o.vertex);
 
 				// Access color-map-texture and extract color
 				fixed4 colVal = tex2Dlod(_ColorMap, float4(mosVal.x, (disVal.x+0.1) , 0, 0));
 				//fixed4 colVal = tex2Dlod(_ColorMap, float4(_ColorMapX, _ColorMapY, 0, 0));
 
-				//TODO: set texture value as color.
+				// sets texture value as color.
 				o.col = colVal;
 
 				// For Lambert / Phong Shading
@@ -130,21 +135,31 @@ Shader "CG_Lecture/DisplacementMapShader"
 			}
 
 			// FRAGMENT / PIXEL SHADER
-			// SV_Target: Shader semantic render target (SV_Target = SV_Target0): https://docs.unity3d.com/Manual/SL-ShaderSemantics.html?_ga=2.64760810.432960686.1524081652-394573263.1524081652
+			// SV_Target: Shader semantic render target (SV_Target = SV_Target0):
+			// https://docs.unity3d.com/Manual/SL-ShaderSemantics.html?_ga=2.64760810.432960686.1524081652-394573263.1524081652
 			fixed4 frag (v2f i) : SV_Target
 			{
 				// Wasser/Wellen-Animation wenn im vertex shader unter dem seeLevelOffset liegt
 				if(i.seeLevelOffset <= 0)
 				{ 
-					// für die Animation werden zwei verschiedene normalen Karten verwendet. Eine Karte wird mit der Zeit in X und die andere in Y Richtung verschoben um eine schönere Wellen-Animation zu erhalten.
-					// Hierzu wird zur Position der _WaveSpeed Faktor multipliziert mit der Zeit seit die Szene geladen wurde (geteilt durch 5 für langsamere Geschwindigkeit) addiert
-					half3 waveNormal = normalize(UnpackNormal(tex2D(_WaveNormalMap1, float2(i.texcoord.x + _WaveSpeed * _Time.x/5, i.texcoord.y))) + UnpackNormal(tex2D(_WaveNormalMap2, float2(i.texcoord.x, i.texcoord.y + _WaveSpeed * _Time.x/5))));
-					// Anschließend werden die Normalen der Animation zu den "normalen" Normalen addiert und normiert.
+					// für die Animation werden zwei verschiedene normalen Karten verwendet.
+					// Eine Karte wird mit der Zeit in X und die andere in Y Richtung verschoben
+					// um eine schönere Wellen-Animation zu erhalten.
+					// Hierzu wird zur Position der _WaveSpeed Faktor multipliziert
+					// mit der Zeit seit die Szene geladen wurde
+					// (geteilt durch 5 für langsamere Geschwindigkeit) addiert
+					half3 waveNormal = normalize(UnpackNormal(tex2D(
+					_WaveNormalMap1, float2(i.texcoord.x + _WaveSpeed * _Time.x/5, i.texcoord.y)))
+					+ UnpackNormal(tex2D(_WaveNormalMap2,
+					float2(i.texcoord.x, i.texcoord.y + _WaveSpeed * _Time.x/5))));
+					// Anschließend werden die Normalen der Animation zu
+					// den "normalen" Normalen addiert und normiert.
 					i.worldNormal = normalize(i.worldNormal + waveNormal);
 				}
 
 				// Ambiente Licht Farbe
-				// das gesamte ambiente Licht der Szene wird durch die Funktion ShadeSH9 (Teil von UnityCG.cginc) ausgewertet
+				// das gesamte ambiente Licht der Szene wird durch die Funktion
+				// ShadeSH9 (Teil von UnityCG.cginc) ausgewertet
 				// Dazu werden die homogenen Oberflächen Normalen in Welt-Koordinaten verwendet.
 				float4 ambLight = float4(ShadeSH9(half4(i.worldNormal,1)),1);
 
@@ -153,8 +168,10 @@ Shader "CG_Lecture/DisplacementMapShader"
 				// Gewichtung durch Skalarprodukt (Dot-Produkt) zwischen Normalen-Vektor
 				// Richtung der Beleuchtungsquelle
 				
-				// WICHTIG: Bei Direktionalem Licht gibt _WorldSpaceLightPos0 die Richtung der Lichtquelle an. 
-				// Bei Anderen Lichtquellen gibt es die Homogenen Koordinaten der Lichtquelle in Welt-Koordinaten an.
+				// WICHTIG: Bei Direktionalem Licht gibt _WorldSpaceLightPos0
+				// die Richtung der Lichtquelle an. 
+				// Bei Anderen Lichtquellen gibt es die Homogenen Koordinaten
+				// der Lichtquelle in Welt-Koordinaten an.
 				// https://docs.unity3d.com/Manual/SL-UnityShaderVariables.html
                 half nl = max(0, dot(i.worldNormal, _WorldSpaceLightPos0.xyz));
                 
@@ -162,7 +179,8 @@ Shader "CG_Lecture/DisplacementMapShader"
                 float4 diffLight = nl * _LightColor0;
 
 
-				float3 worldSpaceReflection = reflect(normalize(-_WorldSpaceLightPos0.xyz), i.worldNormal);
+				float3 worldSpaceReflection = reflect(	normalize(-_WorldSpaceLightPos0.xyz),
+														i.worldNormal);
 				half re = pow(max(dot(worldSpaceReflection, i.worldViewDir), 0), _Shininess);
 
 				// Spekularer Anteil multipliziert mit der Lichtfarbe
@@ -172,7 +190,8 @@ Shader "CG_Lecture/DisplacementMapShader"
                 fixed4 color = i.col;
 				
 				// Multiplikation der Grundfarbe mit dem Ambienten- und dem Diffusions-Anteil
-				// Der Diffuse und Ambiente Anteil wird jeweils mit der entsprechenden Reflektanz der Oberfläche (_Ka, _Kd) gewichtet.
+				// Der Diffuse und Ambiente Anteil wird jeweils mit der
+				// entsprechenden Reflektanz der Oberfläche (_Ka, _Kd) gewichtet.
 				if(i.seeLevelOffset > 0) color = color * ( ambLight * _Ka + diffLight * _Kd );
 				else color = color * ( ambLight * _Ka + diffLight * _Kd + spekLight * _Ks );
 				

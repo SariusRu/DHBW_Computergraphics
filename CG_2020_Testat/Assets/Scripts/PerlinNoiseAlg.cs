@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Diese Klasse beinhaltet alle Elemente und Methoden, die für die Erzeugung der Moisture-Map mittels des Perlin-Noise-Algorithmus benötigt werden.
+/// Diese Klasse beinhaltet alle Elemente und Methoden,
+/// die für die Erzeugung der Moisture-Map mittels des Perlin-Noise-Algorithmus benötigt werden.
 /// </summary>
 public class PerlinNoiseAlg
 {
@@ -37,7 +38,8 @@ public class PerlinNoiseAlg
         string debug = "MoistureMap: \n";
         for(int i = 0; i < height; i++){
             for(int j = 0; j < width; j++) {
-                float sample = Mathf.PerlinNoise(((float)j/width)+j_rand_offset, ((float)i/height)+i_rand_offset);
+                float sample = Mathf.PerlinNoise(((float)j / width) + j_rand_offset,
+                                                 ((float)i / height) + i_rand_offset);
                 debug += sample.ToString("F2") + " | ";
                 texture.SetPixel(j, i, new Color(sample, sample, sample));
             }
