@@ -7,11 +7,7 @@ public class MainScript : MonoBehaviour
     // width of the generated height map
     public int width = 65;
 
-    // height of the generated height map
     public int height = 65;
-
-    // granularity of values between 0 and 1 in the height map
-    public int granularity = 255;
 
     // size of possible added random value
     public float smoothness = 0.75f;
@@ -21,7 +17,7 @@ public class MainScript : MonoBehaviour
     {
         Renderer renderer = GetComponent<Renderer>();
 
-        new DiamondSquareAlg(width, height, granularity, smoothness, renderer);
+        new DiamondSquareImproved(width, height, renderer, smoothness);
         new PerlinNoiseAlg(width, height, renderer);
     }
 }
