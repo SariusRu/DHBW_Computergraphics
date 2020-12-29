@@ -9,7 +9,6 @@ public class DiamondSquareAlg
 {
    // height map two dimensional value storage
     private float[,] height_map;
-    private Texture2D height_map_text;
     private float smoothness;
     private int granularity;
     private int width;
@@ -25,10 +24,10 @@ public class DiamondSquareAlg
     // Splits non square dimensions into square dimensions 
     // Starts Diamond Square Algorithmen on the square dimensions
     // Applies the generated texture to the object
-    public DiamondSquareAlg(int width, int height, int granularity, float smoothness, Renderer t_renderer)
+    public DiamondSquareAlg(int width, int height, int granularity, float smoothness, Renderer renderer)
     {
         // Initiate global objects
-        renderer = t_renderer;
+        this.renderer = renderer;
         this.smoothness = smoothness;
         this.granularity = granularity;
         this.width = width;
@@ -104,8 +103,8 @@ public class DiamondSquareAlg
         }
 
         // Create Height-Map-Texture and apply Texture to GameObject 
-        convertFloatArrayToTexture();
-        renderer.material.SetTexture("_HeightMap", height_map_text);
+        //convertFloatArrayToTexture();
+        this.renderer.material.SetTexture("_HeightMap", convertFloatArrayToTexture());
     }
 
     // Executes the Diamond Square Algorithm on a square object of any odd size
@@ -191,13 +190,29 @@ public class DiamondSquareAlg
 
         // Get Value from ...
         // ... Top-Point:
-        if(y - size >= 0) avg += height_map[x, (y - size)]; count++;
+        if (y - size >= 0)
+        {
+            avg += height_map[x, (y - size)];
+            count++;
+        }
         // ... Left-Point:
-        if(x - size >= 0) avg += height_map[(x - size), y]; count++;
+        if (x - size >= 0)
+        {
+            avg += height_map[(x - size), y];
+            count++;
+        }
         // ... Right-Point: 
-        if(x + size < height_map.GetLength(0)) avg += height_map[(x + size), y]; count++;
+        if (x + size < height_map.GetLength(0))
+        {
+            avg += height_map[(x + size), y];
+            count++;
+        }
         // ... Bottom-Point: 
-        if(y + size < height_map.GetLength(1)) avg += height_map[x, (y + size)]; count++;
+        if (y + size < height_map.GetLength(1))
+        {
+            avg += height_map[x, (y + size)];
+            count++;
+        }
 
         // Calculate the average value & add the random value
         avg = avg / count;
@@ -212,33 +227,18 @@ public class DiamondSquareAlg
         return Random.Range(0, granularity)/(float)granularity;
     }
 
-
-    // Converts a float array into a string for debugging
-    string toString(float[,] array){
-        string res = "[" + array.GetLength(0) + "|" + array.GetLength(1) + "]: \n";
-        for(int i = 0; i < array.GetLength(0); i++) {
-            for(int j = 0; j < array.GetLength(1); j++) {
-                res += array[i,j].ToString("F2") + " | ";
-            }
-            res += "\n";
-        }
-        return res;
-    }
-
     // Converts the float array height_map to a Texture 2D object
-    void convertFloatArrayToTexture(){
-        height_map_text = new Texture2D(width, height, TextureFormat.ARGB32, false);
-        string res = "[" + height_map.GetLength(0) + "|" + height_map.GetLength(1) + "]: \n";
+    private Texture2D convertFloatArrayToTexture(){
+        Texture2D texture = new Texture2D(width, height);
+        //Texture2D texture = new Texture2D(width, height, TextureFormat.ARGB32, false);
         for(int i = 0; i < height_map.GetLength(0); i++) {
             for(int j = 0; j < height_map.GetLength(1); j++) {
                 if(height_map[i,j] != -1.0f) {
-                    height_map_text.SetPixel(i,j,new Color(height_map[i,j],height_map[i,j],height_map[i,j],1.0f));
-                    res += height_map[i,j].ToString("F2") + " | ";
+                    texture.SetPixel(i,j,new Color(height_map[i,j],height_map[i,j],height_map[i,j],1.0f));
                 }
             }
-            res += "\n";
         }
-        //Debug.Log(res);
-        height_map_text.Apply();
+        texture.Apply();
+        return texture;
     }
 }
