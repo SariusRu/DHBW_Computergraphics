@@ -8,7 +8,8 @@ public class SwitchToAstronautFirstPerson : MonoBehaviour
     public Camera thirdPersonCamera;
     public Camera OverviewCamera;
 
-    public GameObject TextToHide;
+    public GameObject TextToHide1;
+    public GameObject TextToHide2;
 
     
     private float counter = 0;
@@ -27,7 +28,7 @@ public class SwitchToAstronautFirstPerson : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Stay 60 Seconds with the Main Camera (= Overview over the Galaxy
+        //Stay xx Seconds with the Main Camera (= Overview over the Galaxy
         //switch to second camera
         if(counter < deadlineFirstSwitch || counter < (deadlineFirstSwitch+deadlineSecondSwitch))
         {
@@ -38,7 +39,8 @@ public class SwitchToAstronautFirstPerson : MonoBehaviour
             //Switch camera
             OverviewCamera.enabled = false;
             firstPersonCamera.enabled = false;
-            TextToHide.SetActive(true);
+            TextToHide1.SetActive(false);
+            TextToHide2.SetActive(true);
             thirdPersonCamera.enabled = true;
             //Prevents the camera from any further switches
             counter += Time.deltaTime;
@@ -49,7 +51,7 @@ public class SwitchToAstronautFirstPerson : MonoBehaviour
             OverviewCamera.enabled = false;
             firstPersonCamera.enabled = true;
             thirdPersonCamera.enabled = false;
-            TextToHide.SetActive(false);
+            TextToHide2.SetActive(false);
             //Prevents the camera from any further switches
             counter += Time.deltaTime;
             SecondSwitchOccured = true;

@@ -6,14 +6,18 @@ Shader "CG_Lecture/DisplacementMapShader"
 	// Property Definition --> Visible in IDE
 	Properties
 	{
-				 _HeightMap ("Height Map", 2D) = "white"{}
-				 _MoistureMap ("Moisture Map", 2D) = "white"{}
+		[Header(Value Maps)]
+				[HideInInspector]_HeightMap ("Height Map", 2D) = "white"{}
+				[HideInInspector]_MoistureMap ("Moisture Map", 2D) = "white"{}
 				_ColorMap ("Color Map", 2D) = "normal"{}
 				_WaveNormalMap1 ("Wave Normal Map 1", 2D) = "normal"{}
 				_WaveNormalMap2 ("Wave Normal Map 2", 2D) = "normal"{}
+		[Header(Terrain Settings)]
+				_TerrainScale ("Terrain Scale", Range(0, 10)) = 1
+		[Header(Water Settings)]
 				_WaveSpeed("Wave Animation Speed", Range(0, 1)) = 0.5
-                _TerrainScale ("Terrain Scale", Range(0, 10)) = 1
 				_SeeLevelScale ("See Level Scale", Range(0, 0.99)) = 0.5
+		[Header(Shader Settings)]
 				// Ambiente Reflektanz
 				_Ka("Ambient Reflectance", Range(0, 1)) = 0.5
 				// Diffuse Reflektanz
