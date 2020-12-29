@@ -45,7 +45,7 @@ public class PerlinNoiseAlg
             }
             debug += "\n";
         }
-        Debug.Log(debug);
+        // Debug.Log(debug);
         texture.Apply();
         return texture;
     }

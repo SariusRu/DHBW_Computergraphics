@@ -58,6 +58,6 @@ public class SwitchToAstronautFirstPerson : MonoBehaviour
             counter += Time.deltaTime;
             SecondSwitchOccured = true;
         }
-        Debug.Log(counter);
+        //Debug.Log(counter);
     }
 }
