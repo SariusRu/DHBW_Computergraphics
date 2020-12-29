@@ -6,22 +6,22 @@ Shader "CG_Lecture/DisplacementMapShader"
 	// Property Definition --> Visible in IDE
 	Properties
 	{
-				 [HideInInspector]_HeightMap ("Height Map", 2D) = "white"{}
-				 [HideInInspector]_MoistureMap ("Moisture Map", 2D) = "white"{}
+				 _HeightMap ("Height Map", 2D) = "white"{}
+				 _MoistureMap ("Moisture Map", 2D) = "white"{}
 				_ColorMap ("Color Map", 2D) = "normal"{}
 				_WaveNormalMap1 ("Wave Normal Map 1", 2D) = "normal"{}
 				_WaveNormalMap2 ("Wave Normal Map 2", 2D) = "normal"{}
 				_WaveSpeed("Wave Animation Speed", Range(0, 1)) = 0.5
-                _TerrainScale ("Terrain Scale", Range(0, 1)) = 0.1
-				_SeeLevelScale ("See Level Scale", Range(0, 1)) = 0.5
+                _TerrainScale ("Terrain Scale", Range(0, 10)) = 1
+				_SeeLevelScale ("See Level Scale", Range(0, 0.99)) = 0.5
 				// Ambiente Reflektanz
 				_Ka("Ambient Reflectance", Range(0, 1)) = 0.5
 				// Diffuse Reflektanz
-				_Kd("Diffuse Reflectance", Range(0, 1)) = 0.5
+				_Kd("Diffuse Reflectance", Range(0, 1)) = 0.65
 				// Spekulare Reflektanz
-				_Ks("Specular Reflectance", Range(0, 1)) = 0.5
+				_Ks("Specular Reflectance", Range(0, 1)) = 0.65
 				// Shininess
-				_Shininess("Shininess", Range(0, 2)) = 1
+				_Shininess("Shininess", Range(0, 2)) = 0.35
 	}
 
 	// A Shader can contain one or more SubShaders, which are primarily used to implement shaders for different GPU capabilities
@@ -59,6 +59,7 @@ Shader "CG_Lecture/DisplacementMapShader"
 			sampler2D _WaveNormalMap1;
 			sampler2D _WaveNormalMap2;
 			float _WaveSpeed;
+			float _ColorMapX, _ColorMapY;
 
 
 			struct v2f
@@ -98,13 +99,20 @@ Shader "CG_Lecture/DisplacementMapShader"
 					disVal.xyz = _SeeLevelScale;
 				}
 
+				// Remap disVal, so that See-Level equals 0
+				float seeLevelOffset = disVal.x - _SeeLevelScale;
+				float maxRange = 1 - _SeeLevelScale;
+				disVal.xyz = seeLevelOffset / maxRange; 
+
+
 				o.vertex.xyz += _TerrainScale * v.normal * disVal.x * 0.01f;		
 
 				//TODO: Convert Vertex Data from Object to Clip Space
 				o.vertex = UnityObjectToClipPos(o.vertex);
 
 				// Access color-map-texture and extract color
-				fixed4 colVal = tex2Dlod(_ColorMap, float4(mosVal.x, (disVal.x-(_SeeLevelScale*0.9)), 0, 0));
+				fixed4 colVal = tex2Dlod(_ColorMap, float4(mosVal.x, (disVal.x+0.1) , 0, 0));
+				//fixed4 colVal = tex2Dlod(_ColorMap, float4(_ColorMapX, _ColorMapY, 0, 0));
 
 				//TODO: set texture value as color.
 				o.col = colVal;
@@ -112,7 +120,7 @@ Shader "CG_Lecture/DisplacementMapShader"
 				// For Lambert / Phong Shading
 				o.worldNormal = UnityObjectToWorldNormal(v.normal);
 				o.worldViewDir = normalize(WorldSpaceViewDir(v.vertex));
-				o.seeLevelOffset = disVal.x-_SeeLevelScale;
+				o.seeLevelOffset = seeLevelOffset;
 
 				return o;
 			}

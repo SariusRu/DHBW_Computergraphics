@@ -154,9 +154,9 @@ internal class DiamondSquareImproved
         int startValueY = (globalWidth - height) / 2;
         int endValueY = startValueY + height;
 
-        for (int x = startValueX; x < endValueX; x++)
+        for (int x = 0; x < globalWidth; x++)
         {
-            for (int y = startValueY; y < endValueY; y++)
+            for (int y = 0; y < globalWidth; y++)
             {
                 texture.SetPixel(x, y, ColorFromValue(x, y, maxValue));
             }
@@ -189,6 +189,10 @@ internal class DiamondSquareImproved
     {
         //Debug.Log(heightMap[x, y]);
         float value = maxValue * heightMap[x, y];
+        if(value > 1)
+        {
+            Debug.Log("Shit!");
+        }
         return new Color(value, value, value);
     }
 }
